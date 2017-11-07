@@ -23,14 +23,14 @@ FROM country JOIN election ON country.id = country_id;
 
 
 CREATE VIEW partyear AS
-SELECT CountryName, year, partyEL.name AS partyName, votes/CAST(votes_valid AS FLOAT) AS percentage 
+SELECT CountryName, year, partyEL.name AS partyName, votes, votes_valid 
 FROM partyEL JOIN yearCO ON partyEL.election_id = yearCO.election_id
 ORDER BY CountryName, year, partyName; 
  
 
 
 CREATE VIEW yearCOav AS
-SELECT CountryName, year, partyName, AVG(percentage) AS percentage
+SELECT CountryName, year, partyName, CAST (SUM(votes) AS FLOAT)/SUM(votes_valid) AS percentage
 FROM partyear 
 GROUP BY CountryName, year, partyName;
 
