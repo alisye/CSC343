@@ -49,4 +49,6 @@ FROM yearCOav;
 
 INSERT INTO q1
 SELECT year, CountryName, voteRange, partyName
-FROM glue;
+FROM glue
+WHERE year >= 1996 and year <= 2016
+ORDER BY year DESC, countryName DESC, voteRange DESC, partyName DESC;
