@@ -11,7 +11,7 @@ create table q1(
 
 --a table with the party names that election_id is refering to   
 CREATE VIEW partyEL AS
-SELECT name, election_id, votes
+SELECT name_short AS name, election_id, votes
 FROM election_result JOIN party ON party.id = party_id;  
 
 
