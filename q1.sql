@@ -36,12 +36,12 @@ GROUP BY CountryName, year, partyName;
 
  
 CREATE VIEW glue AS
-SELECT CountryName, year, partyName, CASE WHEN percentage <= 0.05 THEN '(0, 5]'
-	    WHEN (percentage > 0.05 and percentage <= 0.10) THEN '(5, 10]'
-	    WHEN (percentage > 0.10 and percentage <= 0.20) THEN '(10, 20]'
-	    WHEN (percentage > 0.20 and percentage <= 0.30) THEN '(20, 30]'
-	    WHEN (percentage > 0.30 and percentage <= 0.40) THEN '(30, 40]'
-	    WHEN percentage > 0.4 THEN '(40, 100]'
+SELECT CountryName, year, partyName, CASE WHEN percentage <= 0.05 THEN '(0-5]'
+	    WHEN (percentage > 0.05 and percentage <= 0.10) THEN '(5-10]'
+	    WHEN (percentage > 0.10 and percentage <= 0.20) THEN '(10-20]'
+	    WHEN (percentage > 0.20 and percentage <= 0.30) THEN '(20-30]'
+	    WHEN (percentage > 0.30 and percentage <= 0.40) THEN '(30-40]'
+	    WHEN percentage > 0.4 THEN '(40-100]'
 	    WHEN percentage is NULL THEN NULL
        END AS voteRange
 FROM yearCOav;
