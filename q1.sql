@@ -1,11 +1,11 @@
 SET SEARCH_PATH TO parlgov; 
 
-create table q1(
-		year integer, 
-		countryName text,
-	        voteRange text,
-		partyName text, 
-		primary key (year, countryName, partyName));
+CREATE TABLE q1(
+		year INTEGER, 
+		countryName TEXT,
+	        voteRange TEXT,
+		partyName TEXT, 
+		PRIMARY KEY (year, countryName, partyName));
 
 
 
