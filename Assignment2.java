@@ -55,7 +55,16 @@ public class Assignment2 extends JDBCSubmission {
 
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
-        System.out.println("Hello");
+    	try {
+	    Assignment2 test = new Assignment2();
+	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55", "alisye55", "");
+	    System.out.println(t);
+	    boolean t1 = test.disconnectDB();
+	    System.out.println(t);
+	}
+	catch (ClassNotFoundException e) {
+	    System.out.println("Failed to find JDBC driver");
+	}
     }
 
 }
