@@ -10,22 +10,35 @@ import java.util.List;
 //import java.util.Set;
 //import java.util.HashSet;
 public class Assignment2 extends JDBCSubmission {
-
+    Connection conn;
     public Assignment2() throws ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
     }
 
     @Override
-    public boolean connectDB(String url, String username, String password) {
-        // Implement this method!
-        return false;
+    public boolean connectDB(String url, String username, String password) {	
+	try {
+		conn = DriverManager.getConnection(url, username, password);
+		return true;
+	} 
+	catch (SQLException e) {
+		System.err.println("SQL Exception." + "<Message>:" + e.getMessage());
+		return false;		
+	}
+	
     }
 
     @Override
     public boolean disconnectDB() {
-        // Implement this method!
-        return false;
+	try {
+		conn.close();
+		return true;
+	}
+	catch (SQLException e) {
+		System.err.println("SQL Exception." + "<Message>:" + e.getMessage());
+		return false;
+	}
     }
 
     @Override
