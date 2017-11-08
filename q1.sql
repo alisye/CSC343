@@ -1,13 +1,16 @@
-SET SEARCH_PATH TO parlgov; 
+-- VoteRange
 
-CREATE TABLE q1(
-		year INTEGER, 
-		countryName TEXT,
-	        voteRange TEXT,
-		partyName TEXT, 
-		PRIMARY KEY (year, countryName, partyName));
+SET SEARCH_PATH TO parlgov;
+drop table if exists q1 cascade;
 
+-- You must not change this table definition.
 
+create table q1(
+year INT,
+countryName VARCHAR(50),
+voteRange VARCHAR(20),
+partyName VARCHAR(100)
+);
 
 --a table with the party names that election_id is refering to   
 CREATE VIEW partyEL AS

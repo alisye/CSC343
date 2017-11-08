@@ -1,14 +1,16 @@
 SET SEARCH_PATH TO parlgov;
+drop table if exists q2 cascade;
 
-CREATE TABLE q2(
-		countryName TEXT,
-		partyName TEXT,
-		partyFamily TEXT,
-		wonElections INTEGER,
-		mostRecentlyWonElectionId INTEGER,
-		mostRecentlyWonElectionYear INTEGER);
+-- You must not change this table definition.
 
-
+create table q2(
+countryName VARCHaR(100),
+partyName VARCHaR(100),
+partyFamily VARCHaR(100),
+wonElections INT,
+mostRecentlyWonElectionId INT,
+mostRecentlyWonElectionYear INT
+);
 
 
 CREATE VIEW mostvotes AS
