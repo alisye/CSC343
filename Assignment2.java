@@ -10,7 +10,7 @@ import java.util.List;
 //import java.util.Set;
 //import java.util.HashSet;
 public class Assignment2 extends JDBCSubmission {
-    Connection conn;
+    
     public Assignment2() throws ClassNotFoundException {
 
         Class.forName("org.postgresql.Driver");
@@ -19,7 +19,7 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public boolean connectDB(String url, String username, String password) {	
 	try {
-		conn = DriverManager.getConnection(url, username, password);
+		connection = DriverManager.getConnection(url, username, password);
 		return true;
 	} 
 	catch (SQLException e) {
@@ -32,7 +32,7 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public boolean disconnectDB() {
 	try {
-		conn.close();
+		connection.close();
 		return true;
 	}
 	catch (SQLException e) {
@@ -44,7 +44,10 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
         // Implement this method!
-        return null;
+	ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
+	
+
+
     }
 
     @Override
