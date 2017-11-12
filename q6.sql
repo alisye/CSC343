@@ -13,12 +13,46 @@ CREATE TABLE q6(
         pmParty VARCHAR(100)
 );
 
--- You may find it convenient to do this for each of the views
--- that define your intermediate steps.  (But give them better names!)
-DROP VIEW IF EXISTS intermediate_step CASCADE;
 
--- Define views for your intermediate steps here.
+CREATE VIEW detailedCab AS
+SELECT cabinet.id AS cabinet_id, start_date, previous_cabinet_id AS prev_id, party_id
+FROM cabinet_party JOIN cabinet ON cabinet.id = cabinet_id
+ORDER BY cabinet.id;
 
 
--- the answer to the query 
-insert into q6 
+CREATE VIEW startend AS
+SELECT DISTINCT c2.cabinet_id AS cab_id, c2.start_date AS c2_start_date, c1.start_date AS c2_end_date  
+FROM detailedCab c1 JOIN detailedCab c2 ON c1.prev_id = c2.cabinet_id
+ORDER BY c2.cabinet_id;
+
+
+CREATE VIEW missingpm AS
+SELECT id AS cabinet_id, start_date, c2_end_date AS end_date, country_id
+FROM  cabinet LEFT JOIN startend ON cab_id = id
+ORDER BY cab_id;
+
+
+
+CREATE VIEW foundpm AS
+SELECT missingpm.cabinet_id, start_date, end_date, country_id, party_id
+FROM missingpm LEFT JOIN cabinet_party ON missingpm.cabinet_id = cabinet_party.cabinet_id
+WHERE pm = TRUE or pm is NULL
+ORDER BY missingpm.cabinet_id;
+
+
+
+CREATE VIEW cement AS
+SELECT name, cabinet_id, start_date, end_date, party_id
+FROM foundpm JOIN country ON country.id = country_id
+ORDER BY cabinet_id;
+
+
+CREATE VIEW cement2 AS
+SELECT cement.name AS countryName, cabinet_id, start_date, end_date, party.name AS pmParty
+FROM cement JOIN party ON party.id = party_id
+ORDER BY cabinet_id;
+
+
+INSERT INTO q6
+SELECT countryName, cabinet_id, start_date, end_date, pmParty
+FROM cement2;
