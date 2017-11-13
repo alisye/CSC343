@@ -25,9 +25,10 @@ CREATE VIEW Intermediate_Pairings AS
     P2.party_id as party2_id
   from election_result P1 join election_result P2
       on P1.election_id = P2.election_id
-      and P1.party_id < P2.party_id
+  WHERE P1.party_id < P2.party_id
       and (P1.alliance_id = P2.alliance_id or
-      P1.alliance_id = P2.party_id)
+      P1.alliance_id = P2.id
+         or P1.id = P2.alliance_id)
   order by P1.election_id;
 
 CREATE VIEW Pairings AS
@@ -51,10 +52,12 @@ CREATE VIEW Pairings_Ratio AS
     CAST(num_pairings AS float) / total_elections as election_ratio
   FROM Num_Pairings join Num_Elections
       on Num_Pairings.country_id = Num_Elections.country_id
-  WHERE CAST(num_pairings AS float) / total_elections >= 0.3
+  WHERE (CAST(num_pairings AS float) / total_elections) >= 0.3
   ORDER BY election_ratio DESC;
+
+-- SELECT * from Pairings_Ratio;
 
 -- the answer to the query 
 insert into q7 SELECT country_id, party1_id, party2_id from Pairings_Ratio;
 
-SELECT * from q7;
+-- SELECT * from q7;
