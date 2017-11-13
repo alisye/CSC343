@@ -57,4 +57,3 @@ CREATE VIEW Pairings_Ratio AS
 -- the answer to the query 
 insert into q7 SELECT country_id, party1_id, party2_id from Pairings_Ratio;
 
-SELECT * from q7;
