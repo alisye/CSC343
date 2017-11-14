@@ -211,17 +211,9 @@ public class Assignment2 extends JDBCSubmission {
         // You can put testing code in here. It will not affect our autotester.
     	try {
 	    Assignment2 test = new Assignment2();
-<<<<<<< HEAD
 	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55?currentSchema=parlgov", "alisye55", "");
 	    System.out.println(t);
 	    test.electionSequence("Germany");
-=======
-	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
-	    System.out.println(t);
-	    
-	    test.findSimilarPoliticians(148, (float)0.1);
-	    
->>>>>>> refs/remotes/origin/master
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t1);
 	}
