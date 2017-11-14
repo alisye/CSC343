@@ -60,7 +60,7 @@ public class Assignment2 extends JDBCSubmission {
         //get info relevant to politicianID
         queryString = "SELECT id, description, comment " +
         		"FROM politician_president " + 
-        		"WHERE id = " + (String)politicianId;
+        		"WHERE id = " + Integer.toString(politicianId);
         
         pStatement = conn.prepareStatement(queryString);
         rs = pStatement.executeQuery();
@@ -71,7 +71,7 @@ public class Assignment2 extends JDBCSubmission {
         //get info for all the other policiticans 
         queryString = "SELECT id, description, comment " +
         		"FROM politician_president " + 
-        		"WHERE id != " + (String)politicianId;
+        		"WHERE id != " + Integer.toString(politicianId);
         pStatement = conn.prepareStatement(queryString);
         rs = pStatement.executeQuery();
         
