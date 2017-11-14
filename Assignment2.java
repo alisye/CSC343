@@ -215,6 +215,7 @@ public class Assignment2 extends JDBCSubmission {
 	    
 	    while(i < lenSP) {
 	    	System.out.println(similarPresidents.get(i));
+	    	i += 1;
 	    }
 	    
 	    
