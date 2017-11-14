@@ -204,7 +204,6 @@ public class Assignment2 extends JDBCSubmission {
         }
         
         return similarPresidents;
->>>>>>> refs/remotes/origin/master
     }
 
     public static void main(String[] args) {
