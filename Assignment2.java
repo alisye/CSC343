@@ -132,11 +132,6 @@ public class Assignment2 extends JDBCSubmission {
 	}
     }
 
-    @Override
-    public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
-        
-	return null;
-    }
 
     @Override
     public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
