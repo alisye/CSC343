@@ -101,7 +101,7 @@ ORDER BY morethanthree.country_id;
 
 
 CREATE VIEW tape2 AS
-SELECT tape1.country_id, tape1.party_id, won, mostrecentid, mostrecentdate, CAST(NULL AS VARCHaR(100)) family
+SELECT tape1.country_id, tape1.party_id, won, mostrecentid, mostrecentdate, family
 FROM tape1 LEFT JOIN party_family ON tape1.party_id = party_family.party_id
 ORDER BY tape1.country_id;
 
@@ -113,8 +113,12 @@ SELECT country.name AS countryName, party.name AS partyName, won, mostrecentid, 
 FROM (tape2 JOIN country ON tape2.country_id = country.id) JOIN party ON tape2.party_id = party.id
 ORDER BY tape2.country_id;
 
+CREATE VIEW tape4 AS
+SELECT countryName, partyName, won, mostrecentid, mostrecentdate, CASE WHEN family=NULL THEN ' ' ELSE family END AS family
+FROM tape3; 
+
 
 
 INSERT INTO q2
 SELECT countryName, partyName, family, won, mostrecentid, EXTRACT(YEAR FROM mostrecentdate)
-FROM tape3;
+FROM tape4;
