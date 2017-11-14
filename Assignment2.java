@@ -73,6 +73,7 @@ public class Assignment2 extends JDBCSubmission {
             
             pStatement = conn.prepareStatement(queryString);
             rs = pStatement.executeQuery();
+            rs.next();
             
         	String presidentInput = rs.getString("description") + 
         			" " + rs.getString("comment");
