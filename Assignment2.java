@@ -59,13 +59,9 @@ public class Assignment2 extends JDBCSubmission {
 		ps1.setInt(1, countryId);
 		ResultSet rs1 = ps1.executeQuery();
 		
-		HashMap<Integer, String> electiondates = new HashMap<Integer, String>();
 		while(rs1.next()) {
 			int nextele = rs1.getInt("id");
 			result.elections.add(nextele);
-
-			String date = rs1.getString("e_date");
-			electiondates.put(nextele, date);
 		}
 
 		for (int electionIds : result.elections) {
