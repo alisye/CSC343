@@ -57,39 +57,53 @@ public class Assignment2 extends JDBCSubmission {
         ResultSet rs;
         String queryString;
     	
-        //get info relevant to politicianID
-        queryString = "SELECT id, description, comment " +
-        		"FROM politician_president " + 
-        		"WHERE id = " + Integer.toString(politicianId);
-        
-        pStatement = conn.prepareStatement(queryString);
-        rs = pStatement.executeQuery();
-        
-    	String presidentInput = rs.getString("description") + 
-    			" " + rs.getString("comment");
-        
-        //get info for all the other policiticans 
-        queryString = "SELECT id, description, comment " +
-        		"FROM politician_president " + 
-        		"WHERE id != " + Integer.toString(politicianId);
-        pStatement = conn.prepareStatement(queryString);
-        rs = pStatement.executeQuery();
-        
-        // iterate through politicians and calculate their Jaccard similarity
-        // to politicianID's description and comment
-        while(rs.next()) {
-        	int newID = rs.getInt("id");
-        	String newInput = rs.getString("description") + 
-        			" " + rs.getString("comment");
-        	float jSimilarity = (float)similarity(presidentInput, newInput);
-        	
-        	if(jSimilarity >= threshold){
-        		similarPresidents.add(newID);
-        	}
+        try {
+            Class.forName("org.postgresql.Driver");
         }
+        catch (ClassNotFoundException e) {
+            System.out.println("Failed to find the JDBC driver");
+        }
+        
+        try {
+        	//get info relevant to politicianID
+            queryString = "SELECT id, description, comment " +
+            		"FROM politician_president " + 
+            		"WHERE id = " + Integer.toString(politicianId);
+            
+            pStatement = conn.prepareStatement(queryString);
+            rs = pStatement.executeQuery();
+            
+        	String presidentInput = rs.getString("description") + 
+        			" " + rs.getString("comment");
+            
+            //get info for all the other policiticans 
+            queryString = "SELECT id, description, comment " +
+            		"FROM politician_president " + 
+            		"WHERE id != " + Integer.toString(politicianId);
+            pStatement = conn.prepareStatement(queryString);
+            rs = pStatement.executeQuery();
+            
+            // iterate through politicians and calculate their Jaccard similarity
+            // to politicianID's description and comment
+            while(rs.next()) {
+            	int newID = rs.getInt("id");
+            	String newInput = rs.getString("description") + 
+            			" " + rs.getString("comment");
+            	float jSimilarity = (float)similarity(presidentInput, newInput);
+            	
+            	if(jSimilarity >= threshold){
+            		similarPresidents.add(newID);
+            	}
+            }
+        }
+        
        
-      return similarPresidents;
-//        return null;
+        catch (SQLException se) {
+            System.err.println("SQL Exception." +
+                    "<Message>: " + se.getMessage());
+        }
+        
+        return similarPresidents;
     }
 
     public static void main(String[] args) {
