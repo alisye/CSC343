@@ -77,6 +77,10 @@ public class Assignment2 extends JDBCSubmission {
         	String presidentInput = rs.getString("description") + 
         			" " + rs.getString("comment");
             
+        	//TESTING
+        	System.out.println(presidentInput);
+        	System.out.println("\n");
+            
             //get info for all the other policiticans 
             queryString = "SELECT id, description, comment " +
             		"FROM politician_president " + 
@@ -92,6 +96,11 @@ public class Assignment2 extends JDBCSubmission {
             			" " + rs.getString("comment");
             	float jSimilarity = (float)similarity(presidentInput, newInput);
             	
+            	//TESTING
+            	System.out.println(jSimilarity);
+            	System.out.println("\n");
+                 
+                 
             	if(jSimilarity >= threshold){
             		similarPresidents.add(newID);
             	}
@@ -113,9 +122,13 @@ public class Assignment2 extends JDBCSubmission {
 	    Assignment2 test = new Assignment2();
 	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh", "morgensh", "");
 	    System.out.println(t);
+	    
+	    findSimilarPoliticians(9, 0.1);
+	    
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t);
 	}
+    	
 	catch (ClassNotFoundException e) {
 	    System.out.println("Failed to find JDBC driver");
 	}
