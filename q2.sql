@@ -101,7 +101,7 @@ ORDER BY morethanthree.country_id;
 
 
 CREATE VIEW tape2 AS
-SELECT tape1.country_id, tape1.party_id, won, mostrecentid, mostrecentdate, family
+SELECT tape1.country_id, tape1.party_id, won, mostrecentid, mostrecentdate, CAST(NULL AS VARCHaR(100)) family
 FROM tape1 LEFT JOIN party_family ON tape1.party_id = party_family.party_id
 ORDER BY tape1.country_id;
 
