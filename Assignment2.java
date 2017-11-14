@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.List;
+import java.util.ArrayList;
 
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
@@ -137,16 +138,94 @@ public class Assignment2 extends JDBCSubmission {
 	return null;
     }
 
+    @Override
+    public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
+    	// Implement this method!
+    	List<Integer> similarPresidents = new ArrayList<Integer>();
+    	Connection conn = this.connection;
+    	PreparedStatement pStatement;
+        ResultSet rs;
+        String queryString;
+    	
+        try {
+            Class.forName("org.postgresql.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("Failed to find the JDBC driver");
+        }
+        
+        try {
+        	//get info relevant to politicianID
+            queryString = "SELECT id, description, comment " +
+            		"FROM politician_president " + 
+            		"WHERE id = " + Integer.toString(politicianId);
+            
+            pStatement = conn.prepareStatement(queryString);
+            rs = pStatement.executeQuery();
+            rs.next();
+            
+        	String presidentInput = rs.getString("description") + 
+        			" " + rs.getString("comment");
+            
+        	//TESTING
+        	System.out.println(presidentInput);
+        	System.out.println("\n");
+            
+            //get info for all the other policiticans 
+            queryString = "SELECT id, description, comment " +
+            		"FROM politician_president " + 
+            		"WHERE id != " + Integer.toString(politicianId);
+            pStatement = conn.prepareStatement(queryString);
+            rs = pStatement.executeQuery();
+            
+            // iterate through politicians and calculate their Jaccard similarity
+            // to politicianID's description and comment
+            while(rs.next()) {
+            	int newID = rs.getInt("id");
+            	String newInput = rs.getString("description") + 
+            			" " + rs.getString("comment");
+            	float jSimilarity = (float)similarity(presidentInput, newInput);
+            	
+            	//TESTING
+            	System.out.println(jSimilarity);
+            	System.out.println("\n");
+                 
+                 
+            	if(jSimilarity >= threshold){
+            		similarPresidents.add(newID);
+            	}
+            }
+        }
+        
+       
+        catch (SQLException se) {
+            System.err.println("SQL Exception." +
+                    "<Message>: " + se.getMessage());
+        }
+        
+        return similarPresidents;
+>>>>>>> refs/remotes/origin/master
+    }
+
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
     	try {
 	    Assignment2 test = new Assignment2();
+<<<<<<< HEAD
 	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55?currentSchema=parlgov", "alisye55", "");
 	    System.out.println(t);
 	    test.electionSequence("Germany");
+=======
+	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
+	    System.out.println(t);
+	    
+	    test.findSimilarPoliticians(148, (float)0.1);
+	    
+>>>>>>> refs/remotes/origin/master
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t1);
 	}
+    	
 	catch (ClassNotFoundException e) {
 	    System.out.println("Failed to find JDBC driver");
 	}
