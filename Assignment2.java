@@ -51,7 +51,7 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
     	// Implement this method!
-    	List<Integer> similarPresidents = new List<Integer>();
+    	List<Integer> similarPresidents = new ArrayList<Integer>();
     	Connection conn = this.connection;
     	PreparedStatement pStatement;
         ResultSet rs;
