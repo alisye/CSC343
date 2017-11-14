@@ -209,7 +209,14 @@ public class Assignment2 extends JDBCSubmission {
 	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
 	    System.out.println(t);
 	    
-	    test.findSimilarPoliticians(148, (float)0.1);
+	    List<Integer> similarPresidents = test.findSimilarPoliticians(148, (float)0.0);
+	    Integer lenSP = similarPresidents.size();
+	    Integer i =  0;
+	    
+	    while(i < lenSP) {
+	    	System.out.println(similarPresidents.get(i));
+	    }
+	    
 	    
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t);
