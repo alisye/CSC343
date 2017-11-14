@@ -78,9 +78,9 @@ public class Assignment2 extends JDBCSubmission {
         	String presidentInput = rs.getString("description") + 
         			" " + rs.getString("comment");
             
-        	//TESTING
-        	System.out.println(presidentInput);
-        	System.out.println("\n");
+//        	//TESTING
+//        	System.out.println(presidentInput);
+//        	System.out.println("\n");
             
             //get info for all the other policiticans 
             queryString = "SELECT id, description, comment " +
@@ -98,8 +98,8 @@ public class Assignment2 extends JDBCSubmission {
             	float jSimilarity = (float)similarity(presidentInput, newInput);
             	
             	//TESTING
-            	System.out.println(jSimilarity);
-            	System.out.println("\n");
+//            	System.out.println(jSimilarity);
+//            	System.out.println("\n");
                  
                  
             	if(jSimilarity >= threshold){
@@ -117,23 +117,23 @@ public class Assignment2 extends JDBCSubmission {
         return similarPresidents;
     }
 
-    public static void main(String[] args) {
-        // You can put testing code in here. It will not affect our autotester.
-    	try {
-	    Assignment2 test = new Assignment2();
-	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
-	    System.out.println(t);
-	    
-	    test.findSimilarPoliticians(148, (float)0.1);
-	    
-	    boolean t1 = test.disconnectDB();
-	    System.out.println(t);
-	}
-    	
-	catch (ClassNotFoundException e) {
-	    System.out.println("Failed to find JDBC driver");
-	}
-    }
+//    public static void main(String[] args) {
+//        // You can put testing code in here. It will not affect our autotester.
+//    	try {
+//	    Assignment2 test = new Assignment2();
+//	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh?currentSchema=parlgov", "morgensh", "");
+//	    System.out.println(t);
+//	    
+//	    test.findSimilarPoliticians(148, (float)0.1);
+//	    
+//	    boolean t1 = test.disconnectDB();
+//	    System.out.println(t);
+//	}
+//    	
+//	catch (ClassNotFoundException e) {
+//	    System.out.println("Failed to find JDBC driver");
+//	}
+//    }
 
 }
 
