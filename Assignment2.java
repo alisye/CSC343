@@ -163,9 +163,9 @@ public class Assignment2 extends JDBCSubmission {
         	String presidentInput = rs.getString("description") + 
         			" " + rs.getString("comment");
             
-//        	//TESTING
-//        	System.out.println(presidentInput);
-//        	System.out.println("\n");
+        	//TESTING
+        	System.out.println(presidentInput);
+        	System.out.println("\n");
             
             //get info for all the other policiticans 
             queryString = "SELECT id, description, comment " +
@@ -183,8 +183,8 @@ public class Assignment2 extends JDBCSubmission {
             	float jSimilarity = (float)similarity(presidentInput, newInput);
             	
             	//TESTING
-//            	System.out.println(jSimilarity);
-//            	System.out.println("\n");
+            	System.out.println(jSimilarity);
+            	System.out.println("\n");
                  
                  
             	if(jSimilarity >= threshold){
