@@ -44,23 +44,58 @@ public class Assignment2 extends JDBCSubmission {
     @Override
     public ElectionCabinetResult electionSequence(String countryName) {
         // Implement this method!
-	ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
-	
-
-
+//	ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
+	return null;
     }
 
     @Override
-    public List<Integer> findSimilarPoliticians(Integer politicianName, Float threshold) {
-        // Implement this method!
-        return null;
+    public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
+    	// Implement this method!
+    	List<Integer> similarPresidents;
+    	PreparedStatement pStatement;
+        ResultSet rs;
+        String queryString;
+    	
+        //get info relevant to politicianID
+        queryString = "SELECT id, description, comment " +
+        		"FROM politician_president " + 
+        		"WHERE id = " + (String)politicianID;
+        
+        pStatement = conn.prepareStatement(queryString);
+        rs = pStatement.executeQuery();
+        
+    	String presidentInput = rs.getString("description") + 
+    			" " + rs.getString("comment");
+        
+        //get info for all the other policiticans 
+        queryString = "SELECT id, description, comment " +
+        		"FROM politician_president " + 
+        		"WHERE id != " + (String)politicianID;
+        pStatement = conn.prepareStatement(queryString);
+        rs = pStatement.executeQuery();
+        
+        // iterate through politicians and calculate their Jaccard similarity
+        // to politicianID's description and comment
+        while(rs.next()) {
+        	int newID = rs.getInt("id");
+        	String newInput = rs.getString("description") + 
+        			" " + rs.getString("comment");
+        	float jSimilarity = (float)similarity(presidentInput, newInput);
+        	
+        	if(jSimilarity >= threshold){
+        		similarPresidents.add(newID);
+        	}
+        }
+       
+      return similarPresidents;
+//        return null;
     }
 
     public static void main(String[] args) {
         // You can put testing code in here. It will not affect our autotester.
     	try {
 	    Assignment2 test = new Assignment2();
-	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55", "alisye55", "");
+	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh", "morgensh", "");
 	    System.out.println(t);
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t);
