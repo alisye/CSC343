@@ -123,7 +123,7 @@ public class Assignment2 extends JDBCSubmission {
 	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-morgensh", "morgensh", "");
 	    System.out.println(t);
 	    
-	    findSimilarPoliticians(9, 0.1);
+	    test.findSimilarPoliticians(9, (float)0.1);
 	    
 	    boolean t1 = test.disconnectDB();
 	    System.out.println(t);
