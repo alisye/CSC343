@@ -52,6 +52,7 @@ public class Assignment2 extends JDBCSubmission {
     public List<Integer> findSimilarPoliticians(Integer politicianId, Float threshold) {
     	// Implement this method!
     	List<Integer> similarPresidents;
+    	Connection conn = this.connection;
     	PreparedStatement pStatement;
         ResultSet rs;
         String queryString;
@@ -59,7 +60,7 @@ public class Assignment2 extends JDBCSubmission {
         //get info relevant to politicianID
         queryString = "SELECT id, description, comment " +
         		"FROM politician_president " + 
-        		"WHERE id = " + (String)politicianID;
+        		"WHERE id = " + (String)politicianId;
         
         pStatement = conn.prepareStatement(queryString);
         rs = pStatement.executeQuery();
@@ -70,7 +71,7 @@ public class Assignment2 extends JDBCSubmission {
         //get info for all the other policiticans 
         queryString = "SELECT id, description, comment " +
         		"FROM politician_president " + 
-        		"WHERE id != " + (String)politicianID;
+        		"WHERE id != " + (String)politicianId;
         pStatement = conn.prepareStatement(queryString);
         rs = pStatement.executeQuery();
         
