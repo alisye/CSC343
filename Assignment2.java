@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.List;
+import java.util.ArrayList;
 
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
