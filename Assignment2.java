@@ -143,7 +143,6 @@ public class Assignment2 extends JDBCSubmission {
 				}
 			}
 		}	
-		System.out.println(result.toString());
 		return result;
 
 		

@@ -113,6 +113,9 @@ SELECT country.name AS countryName, party.name AS partyName, won, mostrecentid, 
 FROM (tape2 JOIN country ON tape2.country_id = country.id) JOIN party ON tape2.party_id = party.id
 ORDER BY tape2.country_id;
 
+
+
+
 CREATE VIEW tape4 AS
 SELECT countryName, partyName, won, mostrecentid, mostrecentdate, CASE WHEN family=NULL THEN ' ' ELSE family END AS family
 FROM tape3; 
