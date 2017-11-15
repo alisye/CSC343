@@ -20,6 +20,8 @@ DROP VIEW IF EXISTS Num_Elections CASCADE;
 DROP VIEW IF EXISTS Num_Pairings CASCADE;
 DROP VIEW IF EXISTS Pairings_Ratio CASCADE;
 
+
+--all pairs of parties that are allied with each other
 CREATE VIEW Intermediate_Pairings AS
   select P1.election_id as election_id, P1.party_id as party1_id,
     P2.party_id as party2_id
@@ -31,22 +33,34 @@ CREATE VIEW Intermediate_Pairings AS
          or P1.id = P2.alliance_id)
   order by P1.election_id;
 
+
+
+--adds country  id to intermediate pairings table
 CREATE VIEW Pairings AS
   select country_id, election_id, party1_id, party2_id
   from Intermediate_Pairings join election on election_id = id
   order by election_id;
 
+
+
+--counts how many time each party pair combination has happened
 CREATE VIEW Num_Pairings AS
   SELECT country_id, party1_id, party2_id, count(distinct election_id) as num_pairings
   from Pairings
   GROUP BY party1_id, party2_id, country_id
   ORDER BY num_pairings DESC;
 
+
+
+--counts the number of elections that have happened in each country
 CREATE VIEW Num_Elections AS
   SELECT country_id, count(*) as total_elections
   FROM election
   GROUP BY country_id;
 
+
+--reports all pairs of party alliances that have been allied together greater than or equal to
+--30 percent of all elections
 CREATE VIEW Pairings_Ratio AS
   SELECT Num_Pairings.country_id, party1_id, party2_id, num_pairings,
     CAST(num_pairings AS float) / total_elections as election_ratio
@@ -55,7 +69,6 @@ CREATE VIEW Pairings_Ratio AS
   WHERE (CAST(num_pairings AS float) / total_elections) >= 0.3
   ORDER BY election_ratio DESC;
 
--- SELECT * from Pairings_Ratio;
 
 -- the answer to the query 
 insert into q7 SELECT country_id, party1_id, party2_id from Pairings_Ratio;

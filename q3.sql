@@ -20,6 +20,8 @@ DROP VIEW IF EXISTS Invalid_Countries CASCADE;
 DROP VIEW IF EXISTS Valid_Countries CASCADE;
 DROP VIEW IF EXISTS Valid_Country_Names CASCADE;
 
+
+--finds participation ratios of all elctions between 2001 and 2016
 CREATE VIEW Raw_Participation_Ratios AS
 SELECT country_id, EXTRACT(YEAR FROM e_date) AS year,
   sum(votes_cast) as votes, sum(electorate) as electorate,
@@ -30,6 +32,9 @@ where EXTRACT(YEAR FROM e_date) <=2016
 group by country_id, id
 order by country_id, year;
 
+
+
+--calculates the average participation of all countries
 CREATE VIEW Participation_Ratios AS
   SELECT country_id, year,
     avg(CAST(participation_ratio as float)) as participation_ratio
@@ -38,6 +43,9 @@ CREATE VIEW Participation_Ratios AS
   ORDER BY country_id;
 
 
+
+
+--all countries whose participation ratios were greater in a previous year (not increasing by year)
 CREATE VIEW Invalid_Countries AS
   SELECT DISTINCT PR1.country_id
   from Participation_Ratios PR1 join Participation_Ratios PR2
@@ -46,6 +54,8 @@ CREATE VIEW Invalid_Countries AS
         and PR1.participation_ratio > PR2.participation_ratio;
 
 
+
+--Takes the set difference of all countires and all countires whose participation ratio is not monotomically increasing also reports the participation ratio of each year
 CREATE VIEW Valid_Countries AS
   SELECT country_id, year, participation_ratio
   FROM Participation_Ratios PR
@@ -55,6 +65,8 @@ CREATE VIEW Valid_Countries AS
     WHERE PR.country_id = IC.country_id
   );
 
+
+--replaces country id with country name
 CREATE VIEW Valid_Country_Names AS
  SELECT country.name as cname, year, participation_ratio
  FROM Valid_Countries join country

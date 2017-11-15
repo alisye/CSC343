@@ -13,6 +13,7 @@ mostRecentlyWonElectionYear INT
 );
 
 
+--Finds for each election how many votes did the winning party have
 CREATE VIEW mostvotes AS
 SELECT election_id, MAX(votes) AS winning_votes
 FROM election_result
@@ -21,7 +22,7 @@ ORDER BY election_id;
 
 
 
-
+--for each election finds the party that had the most votes, what country the election took place in and the date of the elction
 CREATE VIEW winners AS
 SELECT election_result.election_id, country_id, party_id, votes, e_date
 FROM (mostvotes JOIN election_result ON mostvotes.election_id = election_result.election_id) JOIN election ON election.id = mostvotes.election_id
@@ -30,7 +31,7 @@ ORDER BY election_id;
 
 
 
-
+--counts how many times each party has won an election in each country
 CREATE VIEW numberwon AS
 SELECT country_id, party_id, COUNT(*) AS won
 FROM winners
@@ -39,7 +40,7 @@ ORDER BY country_id, party_id;
 
 
 
-
+--counts how many parties there are in each country
 CREATE VIEW numberofParties AS
 SELECT country_id, COUNT(id) AS parties
 FROM party
@@ -48,7 +49,7 @@ ORDER BY country_id;
 
 
 
-
+--counts the total number of elections won in each country
 CREATE VIEW totalwon AS
 SELECT country_id, SUM(won) AS totalwins
 FROM numberwon
@@ -57,7 +58,7 @@ ORDER BY country_id;
 
 
 
-
+--For each country finds the average number of elctions won
 CREATE VIEW averageCO AS
 SELECT totalwon.country_id, CAST(totalwins AS FLOAT)/parties AS average_wins
 FROM totalwon JOIN numberofParties ON totalwon.country_id = numberofParties.country_id
@@ -65,7 +66,8 @@ ORDER BY country_id;
 
 
 
-
+--reports the countryid and partyid of all parties that won more than 3 times the average number of 
+--elctions in that country also reports the number of elections won
 CREATE VIEW morethanthree AS
 SELECT numberwon.country_id, party_id, won
 FROM numberwon JOIN averageCO ON numberwon.country_id = averageCO.country_id
@@ -73,7 +75,7 @@ WHERE won > 3 * average_wins;
 
 
 
-
+--finds the most recent election won by all parties that have won elections
 CREATE VIEW mostrecentwin AS
 SELECT country_id, party_id, MAX(e_date) AS recent
 FROM winners
@@ -82,7 +84,7 @@ ORDER BY recent;
 
 
 
-
+--adds the election id of each election to the mostrecentwin table
 CREATE VIEW mostrecentelection AS
 SELECT election_id, mostrecentwin.country_id, mostrecentwin.party_id, recent
 FROM mostrecentwin JOIN winners ON mostrecentwin.country_id = winners.country_id and mostrecentwin.party_id = winners.party_id

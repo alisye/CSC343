@@ -16,6 +16,7 @@ CREATE TABLE q4(
 );
 
 
+--Reports the party_id country_id and the left_right position of each party
 CREATE VIEW partywithA AS
 SELECT party.id AS party_id, country_id, left_right
 FROM party JOIN party_position ON party.id = party_id
@@ -24,7 +25,7 @@ ORDER BY country_id;
 
 
 
-
+--replaces left_right with the required [lb,up) format
 CREATE VIEW partywithrange AS
 SELECT party_id, country_id, CASE
 		WHEN (left_right >= 0 and left_right < 2)  THEN '[0,2)'
@@ -38,7 +39,7 @@ ORDER BY country_id, range;
 
 
 
-
+--counts how may parties are in each range for each country
 CREATE VIEW partywithrangecount AS
 SELECT country_id, range, COUNT(*) AS countOfRange
 FROM partywithrange
@@ -47,6 +48,7 @@ ORDER BY country_id;
 
 
 
+--records for each country how many parites are in the range [0,2)
 CREATE VIEW countrywithr0_2 AS
 SELECT country_id, range AS range1, countofrange AS countofRange0
 FROM partywithrangecount
@@ -55,6 +57,7 @@ ORDER BY country_id;
 
 
 
+--records for each country how many parites are in the range [2,4)
 CREATE VIEW countrywithr2_4 AS
 SELECT country_id, range AS range2,  countofrange AS countofrange1
 FROM partywithrangecount
@@ -63,6 +66,7 @@ ORDER BY country_id;
 
 
 
+--records for each country how many parites are in the range [4,6)
 CREATE VIEW countrywithr4_6 AS
 SELECT country_id, range AS range3,  countofrange AS countofrange2
 FROM partywithrangecount
@@ -71,6 +75,8 @@ ORDER BY country_id;
 
 
 
+
+--records for each country how many parites are in the range [6,8)
 CREATE VIEW countrywithr6_8 AS
 SELECT country_id, range AS range4,  countofrange AS countofrange3
 FROM partywithrangecount
@@ -79,6 +85,8 @@ ORDER BY country_id;
 
 
 
+
+--records for each country how many parites are in the range [8,10)
 CREATE VIEW countrywithr8_10 AS
 SELECT country_id, range AS range5, countofrange AS countofrange4
 FROM partywithrangecount
@@ -87,14 +95,14 @@ ORDER BY country_id;
 
 
 
-
+--reports for each country how many parties are in each range 
 CREATE VIEW adhesive AS
 SELECT countrywithr0_2.country_id, countofrange0 AS r0_2, countofrange1 AS r2_4, countofrange2 AS r4_6, countofrange3 AS r6_8, countofrange4 AS r8_10
 FROM  countrywithr0_2 NATURAL JOIN countrywithr2_4 NATURAL JOIN countrywithr4_6 NATURAL JOIN countrywithr6_8 NATURAL JOIN countrywithr8_10
 ORDER BY countrywithr0_2.country_id; 
 
 
-
+--replaces country id with country Name
 CREATE VIEW adhesive2 AS
 SELECT country.name AS countryName, r0_2, r2_4, r4_6, r6_8, r8_10
 FROM adhesive JOIN country ON country.id = country_id
