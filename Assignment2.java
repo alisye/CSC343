@@ -121,15 +121,10 @@ public class Assignment2 extends JDBCSubmission {
 			Date nextDate = nextElectionDates.get(currId2);
 			
 			if (nextDate != null) {
-				String updateQuery = "SELECT id FROM cabinet WHERE start_date > ? and start_date < ? ORDER BY start_date";
+				String updateQuery = "SELECT id FROM cabinet WHERE election_id = ? ORDER BY start_date";
 				PreparedStatement updateState = connection.prepareStatement(updateQuery);
-				updateState.setDate(1, currDate2);
-				updateState.setDate(2, nextDate);
+				updateState.setInt(1, currId2);
 				ResultSet updateRes = updateState.executeQuery();
-				if (!updateRes.next()) {
-					result.elections.add(100000);
-				}
-				updateRes.beforeFirst();
 				while (updateRes.next()) {
 					int cabId = updateRes.getInt("id");
 					result.elections.add(currId2);
@@ -137,9 +132,9 @@ public class Assignment2 extends JDBCSubmission {
 				}
 			}
 			else {
-				String updateLatestQuery = "SELECT id FROM cabinet WHERE start_date > ? ORDER BY start_date";
+				String updateLatestQuery = "SELECT id FROM cabinet WHERE election_id > ? ORDER BY start_date";
 				PreparedStatement updateLatestState = connection.prepareStatement(updateLatestQuery);
-				updateLatestState.setDate(1, currDate2);
+				updateLatestState.setInt(1, currId2);
 				ResultSet latestResult = updateLatestState.executeQuery();
 				while (latestResult.next()) {
 					int cabLateId = latestResult.getInt("id");
