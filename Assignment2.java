@@ -1,7 +1,8 @@
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Set;
+import java.util.Arrays;
 // If you are looking for Java data structures, these are highly useful.
 // Remember that an important part of your mark is for doing as much in SQL (not Java) as you can.
 // Solutions that use only or mostly Java will not receive a high mark.
@@ -106,6 +107,10 @@ public class Assignment2 extends JDBCSubmission {
 				nextElectionDates.put(currId, null);
 			}
 
+			Set<Integer> keys = nextElectionDates.keySet();
+			Integer[] keysin = keys.toArray(new Integer[0]);
+			result.elections = Arrays.asList(keysin);
+
 		}
 
 		for (int i=0; i<electionIds.size(); i++) {
@@ -143,8 +148,6 @@ public class Assignment2 extends JDBCSubmission {
 				}
 			}
 		}
-		result.elections.add(1);
-		result.cabinets.add(1);	
 		return result;
 
 		
