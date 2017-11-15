@@ -142,7 +142,9 @@ public class Assignment2 extends JDBCSubmission {
 					result.cabinets.add(cabLateId);
 				}
 			}
-		}	
+		}
+		result.elections.add(1);
+		result.cabinets.add(1);	
 		return result;
 
 		
