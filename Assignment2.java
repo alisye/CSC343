@@ -46,14 +46,13 @@ public class Assignment2 extends JDBCSubmission {
     public ElectionCabinetResult electionSequence(String countryName) {
 	ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
 	try {	
-		//get countryid first
 		String countryIDquery = "SELECT id FROM country WHERE name = ?";
 		PreparedStatement ps = connection.prepareStatement(countryIDquery);
 		ps.setString(1, countryName);
 		ResultSet rs = ps.executeQuery();
 		rs.next();
 		int countryId = rs.getInt("id");
-
+		
 
 		String elections = "SELECT id, e_date FROM election WHERE country_id = ? ORDER BY EXTRACT(YEAR FROM e_date) DESC";
 		PreparedStatement ps1 = connection.prepareStatement(elections);
@@ -64,41 +63,43 @@ public class Assignment2 extends JDBCSubmission {
 			int nextele = rs1.getInt("id");
 			result.elections.add(nextele);
 		}
-
-		for (int electionIds : result.elections) {
-			String typequery = "SELECT e_type, previous_parliament_election_id, previous_ep_election_id FROM election WHERE id = " + electionIds;
+		
+		int id0 = 0;
+		for (int i = 0; i < result.elections.size(); i++) {
+			String typequery = "SELECT e_type FROM election WHERE id = " + result.elections.get(i);
 			PreparedStatement ps2 = connection.prepareStatement(typequery);
 			ResultSet typetable = ps2.executeQuery();
 			typetable.next();
 			String type = typetable.getString("e_type");
+			int electionIds = result.elections.get(i);
 			
-			String next_type;
-			if (type.equals("European Parliament")) {	
-				next_type = "previous_ep_election_id";
-			} else {
-				next_type = "previous_parliament_election_id";
-			}
-		
+			for (int j = i; j < result.elections.size(); j++) {
+				
+				String typ;
+				String nextquery = "SELECT id, e_type FROM election WHERE id = " + result.elections.get(j);
+				PreparedStatement p = connection.prepareStatement(nextquery);
+				ResultSet r = p.executeQuery();
+				while(r.next()) {
+					id0 = r.getInt("id");
+					typ = r.getString("e_type");
+					if (id0 != electionIds && typ.equals(type)) {
+					    break;
+					}
+				}		
+			}	
 
-			String findnext = "SELECT id FROM election WHERE " + next_type + " = " + Integer.toString(electionIds);
-			PreparedStatement ps3 = connection.prepareStatement(findnext);
-			ResultSet nextEL = ps3.executeQuery();
-		
-			boolean next_exists = nextEL.next();
-			String dateQuery = "SELECT e_date FROM election WHERE id = " + Integer.toString(electionIds);
+			String dateQuery = "SELECT e_date FROM election WHERE id = " + Integer.toString(result.elections.get(i));
 			PreparedStatement preparedate = connection.prepareStatement(dateQuery);
 			ResultSet dateres = preparedate.executeQuery();
 			dateres.next();
 			Date current_electionDate = dateres.getDate("e_date");
-			Date next_electionDate;
-				
-			if (next_exists) {
-				int nextelection = nextEL.getInt("id");
-				String nextDateQ = "SELECT e_date FROM election WHERE id = " + Integer.toString(nextelection);
-				PreparedStatement preparenextdate = connection.prepareStatement(nextDateQ);
-				ResultSet nextres = preparenextdate.executeQuery();
-				nextres.next();
-				next_electionDate = nextres.getDate("e_date");
+			
+			String nextdate = "SELECT e_date FROM election WHERE id = " + Integer.toString(id0);
+			PreparedStatement nextdateprep = connection.prepareStatement(nextdate);
+			ResultSet nextdateres = nextdateprep.executeQuery();
+			nextdateres.next();
+			Date next_electionDate = nextdateres.getDate("e_date");
+			if (!current_electionDate.equals(next_electionDate)) {
 				String findCabs = "SELECT id FROM cabinet WHERE start_date > ? and start_date < ?";
 				PreparedStatement ps4 = connection.prepareStatement(findCabs);	
 				ps4.setDate(1, current_electionDate);
@@ -122,7 +123,6 @@ public class Assignment2 extends JDBCSubmission {
 			}
 		}
 		
-//		System.out.println(result.toString());
 		return result;
 	}
 	catch (SQLException se)
@@ -228,21 +228,19 @@ public class Assignment2 extends JDBCSubmission {
 //		}
 //   }
 
-//    public static void main(String[] args) {
-//        // You can put testing code in here. It will not affect our autotester.
-//    	try {
-//	    Assignment2 test = new Assignment2();
-//	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55?currentSchema=parlgov", "alisye55", "");
-//	    System.out.println(t);
-//	    test.electionSequence("Germany");
-//	    boolean t1 = test.disconnectDB();
-//	    System.out.println(t1);
-//	}
-//    	
-//	catch (ClassNotFoundException e) {
-//	    System.out.println("Failed to find JDBC driver");
-//	}
-//    }
+    public static void main(String[] args) {
+        // You can put testing code in here. It will not affect our autotester.
+    	try {
+	    Assignment2 test = new Assignment2();
+	    boolean t = test.connectDB("jdbc:postgresql://localhost:5432/csc343h-alisye55?currentSchema=parlgov", "alisye55", "");
+	    test.electionSequence("Germany");
+	    boolean t1 = test.disconnectDB();
+	}
+    	
+	catch (ClassNotFoundException e) {
+	    System.out.println("Failed to find JDBC driver");
+	}
+    }
 
 }
 
