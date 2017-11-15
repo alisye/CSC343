@@ -115,6 +115,13 @@ ORDER BY tape2.country_id;
 
 
 
+
+CREATE VIEW tape4 AS
+SELECT countryName, partyName, won, mostrecentid, mostrecentdate, CASE WHEN family=NULL THEN ' ' ELSE family END AS family
+FROM tape3; 
+
+
+
 INSERT INTO q2
 SELECT countryName, partyName, family, won, mostrecentid, EXTRACT(YEAR FROM mostrecentdate)
-FROM tape3;
+FROM tape4;
