@@ -46,84 +46,107 @@ public class Assignment2 extends JDBCSubmission {
     public ElectionCabinetResult electionSequence(String countryName) {
 	ElectionCabinetResult result = new ElectionCabinetResult(new ArrayList<Integer> (), new ArrayList<Integer> ());
 	try {	
-		String countryIDquery = "SELECT id FROM country WHERE name = ?";
-		PreparedStatement ps = connection.prepareStatement(countryIDquery);
-		ps.setString(1, countryName);
-		ResultSet rs = ps.executeQuery();
-		rs.next();
-		int countryId = rs.getInt("id");
+		String clearTables = "DROP VIEW IF EXISTS intermediate CASCADE";	
+		PreparedStatement dropState = connection.prepareStatement(clearTables);
+		dropState.execute();
+
+		String countryQuery = "SELECT id FROM country WHERE name = ?";
+		PreparedStatement countrystatement = connection.prepareStatement(countryQuery);
+		countrystatement.setString(1, countryName);
+		ResultSet countryRes = countrystatement.executeQuery();
+		countryRes.next();
+		int countryId = countryRes.getInt("id");
 		
 
-		String elections = "SELECT id, e_date FROM election WHERE country_id = ? ORDER BY EXTRACT(YEAR FROM e_date) DESC";
-		PreparedStatement ps1 = connection.prepareStatement(elections);
-		ps1.setInt(1, countryId);
-		ResultSet rs1 = ps1.executeQuery();
+		String ElectionQuery = "CREATE VIEW intermediate AS SELECT id, e_date, e_type AS type FROM election WHERE country_id = " + Integer.toString(countryId) + " ORDER BY e_date DESC";
+		PreparedStatement ElecState = connection.prepareStatement(ElectionQuery);		
+		ElecState.execute();
 		
-		while(rs1.next()) {
-			int nextele = rs1.getInt("id");
-			result.elections.add(nextele);
+		String searchelQ = "SELECT * FROM intermediate";
+		PreparedStatement sestate = connection.prepareStatement(searchelQ);
+		ResultSet seRes = sestate.executeQuery();
+		
+		int NeId;
+		Date NeDate;
+		String Netype;
+		ArrayList<Integer> electionIds = new ArrayList<Integer>();
+		ArrayList<String> electionTypes = new ArrayList<String>();
+		while (seRes.next()) {
+			NeId = seRes.getInt("id");
+			electionIds.add(NeId);
+			NeDate = seRes.getDate("e_date");
+			Netype = seRes.getString("type");
+			electionTypes.add(Netype);
 		}
 		
-		int id0 = 0;
-		for (int i = 0; i < result.elections.size(); i++) {
-			String typequery = "SELECT e_type FROM election WHERE id = " + result.elections.get(i);
-			PreparedStatement ps2 = connection.prepareStatement(typequery);
-			ResultSet typetable = ps2.executeQuery();
-			typetable.next();
-			String type = typetable.getString("e_type");
-			int electionIds = result.elections.get(i);
-			
-			for (int j = i; j < result.elections.size(); j++) {
-				
-				String typ;
-				String nextquery = "SELECT id, e_type FROM election WHERE id = " + result.elections.get(j);
-				PreparedStatement p = connection.prepareStatement(nextquery);
-				ResultSet r = p.executeQuery();
-				while(r.next()) {
-					id0 = r.getInt("id");
-					typ = r.getString("e_type");
-					if (id0 != electionIds && typ.equals(type)) {
-					    break;
-					}
-				}		
-			}	
+		HashMap<Integer, Date> nextElectionDates = new HashMap<Integer, Date>();
+		for (int i=0; i<electionIds.size(); i++) {
+			int currId = electionIds.get(i);
+			Date currDate;
+			String getDateQ = "SELECT e_date FROM intermediate WHERE id = " + Integer.toString(currId);
+			PreparedStatement currState = connection.prepareStatement(getDateQ);
+			ResultSet currRes = currState.executeQuery();
+			currRes.next();
+			currDate = currRes.getDate("e_date");
 
-			String dateQuery = "SELECT e_date FROM election WHERE id = " + Integer.toString(result.elections.get(i));
-			PreparedStatement preparedate = connection.prepareStatement(dateQuery);
-			ResultSet dateres = preparedate.executeQuery();
-			dateres.next();
-			Date current_electionDate = dateres.getDate("e_date");
+			String potentialNextQ = "SELECT e_date " +
+					        " FROM intermediate" +
+						" WHERE type =" + 
+						" '" + electionTypes.get(i) + "'" +
+						" and e_date > ? ORDER BY e_date";
 			
-			String nextdate = "SELECT e_date FROM election WHERE id = " + Integer.toString(id0);
-			PreparedStatement nextdateprep = connection.prepareStatement(nextdate);
-			ResultSet nextdateres = nextdateprep.executeQuery();
-			nextdateres.next();
-			Date next_electionDate = nextdateres.getDate("e_date");
-			if (!current_electionDate.equals(next_electionDate)) {
-				String findCabs = "SELECT id FROM cabinet WHERE start_date > ? and start_date < ?";
-				PreparedStatement ps4 = connection.prepareStatement(findCabs);	
-				ps4.setDate(1, current_electionDate);
-				ps4.setDate(2, next_electionDate);
-				ResultSet validcabs1 = ps4.executeQuery();
-				while (validcabs1.next()){
-					int cabs = validcabs1.getInt("id");
-					result.cabinets.add(cabs);
-				}
-
-			} else {
-				String findfirstCabs = "SELECT id FROM cabinet WHERE start_date > ?";
-				PreparedStatement ps5 = connection.prepareStatement(findfirstCabs);
-				ps5.setDate(1, current_electionDate);
-				ResultSet validcabs2 = ps5.executeQuery();
-				while (validcabs2.next()) {
-					int cabs = validcabs2.getInt("id");
-					result.cabinets.add(cabs);
-				}
-				
+			PreparedStatement potentialNextstate = connection.prepareStatement(potentialNextQ);
+			potentialNextstate.setDate(1, currDate);
+			ResultSet potentialRes = potentialNextstate.executeQuery();
+			if (potentialRes.next()) {
+				Date nextDate = potentialRes.getDate("e_date");
+				nextElectionDates.put(currId, nextDate);
 			}
+			else {
+				nextElectionDates.put(currId, null);
+			}
+
 		}
-		
+
+		for (int i=0; i<electionIds.size(); i++) {
+			int currId2 = electionIds.get(i);
+			Date currDate2;
+			String getDateQ = "SELECT e_date FROM intermediate WHERE id = " + Integer.toString(currId2);
+			PreparedStatement currState = connection.prepareStatement(getDateQ);
+			ResultSet currRes = currState.executeQuery();
+			currRes.next();
+			currDate2 = currRes.getDate("e_date");
+
+			Date nextDate = nextElectionDates.get(currId2);
+			
+			if (nextDate != null) {
+				String updateQuery = "SELECT id FROM cabinet WHERE start_date > ? and start_date < ? ORDER BY start_date";
+				PreparedStatement updateState = connection.prepareStatement(updateQuery);
+				updateState.setDate(1, currDate2);
+				updateState.setDate(2, nextDate);
+				ResultSet updateRes = updateState.executeQuery();
+				while (updateRes.next()) {
+					int cabId = updateRes.getInt("id");
+					result.elections.add(currId2);
+					result.cabinets.add(cabId);
+				}
+			}
+			else {
+				String updateLatestQuery = "SELECT id FROM cabinet WHERE start_date > ? ORDER BY start_date";
+				PreparedStatement updateLatestState = connection.prepareStatement(updateLatestQuery);
+				updateLatestState.setDate(1, currDate2);
+				ResultSet latestResult = updateLatestState.executeQuery();
+				while (latestResult.next()) {
+					int cabLateId = latestResult.getInt("id");
+					result.elections.add(currId2);
+					result.cabinets.add(cabLateId);
+				}
+			}
+		}	
+		System.out.println(result.toString());
 		return result;
+
+		
 	}
 	catch (SQLException se)
 	{
