@@ -107,10 +107,6 @@ public class Assignment2 extends JDBCSubmission {
 				nextElectionDates.put(currId, null);
 			}
 
-			Set<Integer> keys = nextElectionDates.keySet();
-			Integer[] keysin = keys.toArray(new Integer[0]);
-			result.elections = Arrays.asList(keysin);
-
 		}
 
 		for (int i=0; i<electionIds.size(); i++) {
@@ -130,6 +126,10 @@ public class Assignment2 extends JDBCSubmission {
 				updateState.setDate(1, currDate2);
 				updateState.setDate(2, nextDate);
 				ResultSet updateRes = updateState.executeQuery();
+				if (!updateRes.next()) {
+					result.elections.add(100000);
+				}
+				updateRes.beforeFirst();
 				while (updateRes.next()) {
 					int cabId = updateRes.getInt("id");
 					result.elections.add(currId2);
