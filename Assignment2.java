@@ -173,12 +173,16 @@ public class Assignment2 extends JDBCSubmission {
         }
         
         try {
-        	//get info relevant to politicianID
+        	/* Query1: Table with a single tuple, containing the
+        	 * id, description, and comment of the input politician 
+        	 */
+        	
             queryString = "SELECT id, description, comment " +
             		"FROM politician_president " + 
-            		"WHERE id = " + Integer.toString(politicianId);
-            
+            		"WHERE id = ?";
+           
             pStatement = conn.prepareStatement(queryString);
+            pStatement.setInt(1, politicianId);
             rs = pStatement.executeQuery();
             rs.next();
             
@@ -189,14 +193,25 @@ public class Assignment2 extends JDBCSubmission {
 //        	System.out.println(presidentInput);
 //        	System.out.println("\n");
             
-            //get info for all the other policiticans 
+            // Query 2: Table of tuples consisting of all politician IDs, 
+        	// description, and comments in the politician_president relation 
+        	// who are not the input president's ID
+        	
             queryString = "SELECT id, description, comment " +
             		"FROM politician_president " + 
             		"WHERE id != " + Integer.toString(politicianId);
             pStatement = conn.prepareStatement(queryString);
             rs = pStatement.executeQuery();
             
-            // iterate through politicians and calculate their Jaccard similarity
+            
+            /* NOTE: I could've done a Cartesian product between the above two queries, 
+             * and then calculated the Jaccard similarity between each relvant 
+             * set of attributes in the tuple, but I felt that this would increase
+             * the code complexity, while  not necessarily decreasing 
+             * the run time of the program. So instead, here's a while loop.
+             */ 
+             
+            // Iterate through politicians and calculate their Jaccard similarity
             // to politicianID's description and comment
             while(rs.next()) {
             	int newID = rs.getInt("id");
